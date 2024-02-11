@@ -1,4 +1,5 @@
-use bubble_sort::{bubble_sort, check_sorted, get_i32, make_random_vec, print_vec};
+use bubble_sort::{bubble_sort, check_sorted};
+use util::{get_i32, make_random_vec, print_vec};
 
 fn main() {
     let num_items = get_i32("Number of items: ");
