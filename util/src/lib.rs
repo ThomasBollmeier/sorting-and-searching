@@ -16,7 +16,7 @@ pub fn get_i32(prompt: &str) -> i32 {
     return trimmed.parse::<i32>().expect("Error parsing integer");
 }
 
-struct Prng {
+pub struct Prng {
     seed: u32,
 }
 
@@ -73,7 +73,7 @@ pub fn make_random_vec(num_items: i32, max: i32) -> Vec<i32> {
 }
 
 // Create string of first num_items items
-pub fn make_vec_string(vec: &Vec<i32>, num_items: i32) -> String {
+pub fn make_vec_string<T: std::fmt::Display>(vec: &Vec<T>, num_items: i32) -> String {
     let mut max = vec.len();
     if max > num_items as usize {
         max = num_items as usize;
@@ -95,7 +95,7 @@ pub fn make_vec_string(vec: &Vec<i32>, num_items: i32) -> String {
 }
 
 // Print at most num_items items.
-pub fn print_vec(vec: &Vec<i32>, num_items: i32) {
+pub fn print_vec<T: std::fmt::Display>(vec: &Vec<T>, num_items: i32) {
     println!("{}", make_vec_string(vec, num_items));
 }
 
