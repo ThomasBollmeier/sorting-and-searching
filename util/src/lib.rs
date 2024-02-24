@@ -1,9 +1,22 @@
+use num::Integer;
+use std::fmt::Debug;
 use std::io;
 use std::io::Write;
+use std::str::FromStr;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 // Prompt the user for an i32.
 pub fn get_i32(prompt: &str) -> i32 {
+    get_int(prompt).expect("Error parsing integer")
+}
+
+// Prompt the user for an i64.
+pub fn get_i64(prompt: &str) -> i64 {
+    get_int(prompt).expect("Error parsing integer")
+}
+
+// Prompt the user for an integer
+fn get_int<T: Integer + FromStr + Debug>(prompt: &str) -> Result<T, <T as FromStr>::Err> {
     print!("{prompt}");
     io::stdout().flush().unwrap();
 
@@ -12,8 +25,7 @@ pub fn get_i32(prompt: &str) -> i32 {
         .read_line(&mut str_value)
         .expect("Error reading input");
 
-    let trimmed = str_value.trim();
-    return trimmed.parse::<i32>().expect("Error parsing integer");
+    str_value.trim().parse::<T>()
 }
 
 pub struct Prng {
