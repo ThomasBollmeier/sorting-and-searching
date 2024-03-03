@@ -1,7 +1,7 @@
 use std::time::Instant;
 
 // The board dimensions.
-const NUM_ROWS: usize = 6;
+const NUM_ROWS: usize = 20;
 const NUM_COLS: usize = NUM_ROWS;
 const INUM_ROWS: i32 = NUM_ROWS as i32;
 const INUM_COLS: i32 = NUM_COLS as i32;
@@ -80,7 +80,7 @@ fn board_is_legal(board: &[[char; NUM_COLS]; NUM_ROWS]) -> bool {
 }
 
 // Return true if the board is legal and a solution.
-fn board_is_a_solution(board: &[[char; NUM_COLS]; NUM_ROWS]) -> bool {
+fn _board_is_a_solution(board: &[[char; NUM_COLS]; NUM_ROWS]) -> bool {
     if !board_is_legal(board) {
         return false;
     }
@@ -97,7 +97,7 @@ fn board_is_a_solution(board: &[[char; NUM_COLS]; NUM_ROWS]) -> bool {
     num_queens == board.len()
 }
 
-fn next_location(r: i32, c: i32) -> (i32, i32) {
+fn _next_location(r: i32, c: i32) -> (i32, i32) {
     let mut next_r = r;
     let mut next_c = c + 1;
 
@@ -109,22 +109,22 @@ fn next_location(r: i32, c: i32) -> (i32, i32) {
     (next_r, next_c)
 }
 
-fn place_queens_1(board: &mut [[char; NUM_COLS]; NUM_ROWS], r: i32, c: i32) -> bool {
+fn _place_queens_1(board: &mut [[char; NUM_COLS]; NUM_ROWS], r: i32, c: i32) -> bool {
     if r > INUM_ROWS - 1 {
-        return board_is_a_solution(board);
+        return _board_is_a_solution(board);
     }
 
-    let (next_r, next_c) = next_location(r, c);
+    let (next_r, next_c) = _next_location(r, c);
 
     // no placement:
-    let mut ok = place_queens_1(board, next_r, next_c);
+    let mut ok = _place_queens_1(board, next_r, next_c);
     if ok {
         return true;
     }
 
     // placement:
     board[r as usize][c as usize] = 'Q';
-    ok = place_queens_1(board, next_r, next_c);
+    ok = _place_queens_1(board, next_r, next_c);
     if !ok {
         board[r as usize][c as usize] = '.';
     }
@@ -139,10 +139,10 @@ fn _place_queens_2(
     num_placed: i32,
 ) -> bool {
     if r > INUM_ROWS - 1 || num_placed == INUM_ROWS {
-        return board_is_a_solution(board);
+        return _board_is_a_solution(board);
     }
 
-    let (next_r, next_c) = next_location(r, c);
+    let (next_r, next_c) = _next_location(r, c);
 
     // no placement:
     let mut ok = _place_queens_2(board, next_r, next_c, num_placed);
@@ -160,14 +160,37 @@ fn _place_queens_2(
     ok
 }
 
+// Try to place a queen in this column.
+// Return true if we find a legal board.
+fn place_queens_4(board: &mut [[char; NUM_COLS]; NUM_ROWS], c: i32) -> bool {
+    if c == INUM_COLS {
+        return board_is_legal(board);
+    }
+
+    if !board_is_legal(board) {
+        return false;
+    }
+
+    for r in 0..INUM_ROWS {
+        board[r as usize][c as usize] = 'Q';
+        if place_queens_4(board, c + 1) {
+            return true;
+        }
+        board[r as usize][c as usize] = '.';
+    }
+
+    false
+}
+
 fn main() {
     // Create a NUM_ROWS x NUM_COLS array with all entries Initialized to UNVISITED.
     let mut board = [['.'; NUM_COLS]; NUM_ROWS];
 
     let start = Instant::now();
-    let success = place_queens_1(&mut board, 0, 0);
+    //let success = _place_queens_1(&mut board, 0, 0);
     //let success = place_queens_2(&mut board, 0, 0, 0);
     //let success = place_queens_3(& mut board);
+    let success = place_queens_4(&mut board, 0);
     let duration = start.elapsed();
 
     println!("Time: {:?}", duration);
